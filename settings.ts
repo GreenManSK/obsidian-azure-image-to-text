@@ -88,9 +88,9 @@ export class AzureImageToTextSettingsTab extends PluginSettingTab {
             .addText((text) =>
                 text
                     .setPlaceholder('ai/processed')
-                    .setValue(this.plugin.settings.deploymentName)
+                    .setValue(this.plugin.settings.processedTag)
                     .onChange(async (value) => {
-                        this.plugin.settings.deploymentName = value;
+                        this.plugin.settings.processedTag = value;
                         await this.plugin.saveSettings();
                     })
             );
