@@ -6,7 +6,7 @@ export interface AzureImageToTextSettings {
     modelName: string;
     deploymentName: string;
     prompt: string;
-	processedTag: string;
+    processedTag: string;
 }
 
 export interface IAzureImageToTextPlugin extends Plugin {

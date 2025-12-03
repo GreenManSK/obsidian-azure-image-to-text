@@ -17,6 +17,7 @@ export default class MyPlugin
     implements IAzureImageToTextPlugin
 {
     settings: AzureImageToTextSettings;
+    activityNotice?: Notice;
 
     async onload() {
         await this.loadSettings();
@@ -65,7 +66,11 @@ export default class MyPlugin
             return;
         }
 
+        if (this.activityNotice) {
+            this.activityNotice.hide();
+        }
         const notice = new Notice('Starting', 0);
+        this.activityNotice = notice;
         const imageFiles = [] as TFile[];
         cache.embeds?.forEach((link) => {
             const linked = this.app.metadataCache.getFirstLinkpathDest(
@@ -100,6 +105,10 @@ export default class MyPlugin
                             role: 'user',
                             content: [
                                 {
+                                    type: 'text',
+                                    text: 'If image does not have text return "invalid image"',
+                                },
+                                {
                                     type: 'image_url',
                                     image_url: {
                                         url: `data:image/${image.extension.toLowerCase()};base64,${base64}`,
@@ -112,6 +121,9 @@ export default class MyPlugin
                     max_tokens: 1024,
                 });
                 const text = completion.choices[0].message.content;
+                if (text?.contains('invalid image')) {
+                    continue;
+                }
                 text && imageTexts.push(text);
             } catch (err) {
                 new Notice(`API error for ${file.name}:`, err.message);
